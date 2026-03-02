@@ -4,7 +4,7 @@
  * Returns { text: string } with the extracted plain text.
  */
 import { auth } from "@clerk/nextjs/server";
-import pdfParse from "pdf-parse/lib/pdf-parse.js";
+import { PDFParse } from "pdf-parse";
 
 export const runtime = "nodejs"; // pdf-parse requires Node.js runtime
 
@@ -48,7 +48,8 @@ export async function POST(req: Request) {
   const buffer = Buffer.from(await file.arrayBuffer());
 
   try {
-    const { text } = await pdfParse(buffer);
+    const parser = new PDFParse({ data: buffer });
+    const { text } = await parser.getText();
     const cleaned = text
       .replace(/\r\n/g, "\n")
       .replace(/\n{3,}/g, "\n\n")
