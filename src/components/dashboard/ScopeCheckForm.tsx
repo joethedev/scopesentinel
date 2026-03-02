@@ -12,6 +12,13 @@ interface AnalysisResult {
   suggested_reply: string;
 }
 
+interface LimitInfo {
+  limitReached: true;
+  checksUsed: number;
+  limit: number;
+  error: string;
+}
+
 const STATUS_CONFIG: Record<
   ResultStatus,
   { label: string; color: string; bg: string; border: string; dot: string }
@@ -46,6 +53,7 @@ export default function ScopeCheckForm() {
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [limitInfo, setLimitInfo] = useState<LimitInfo | null>(null);
   const resultRef = useRef<HTMLDivElement>(null);
 
   // PDF upload state
@@ -63,6 +71,7 @@ export default function ScopeCheckForm() {
     setLoading(true);
     setError(null);
     setResult(null);
+    setLimitInfo(null);
 
     try {
       const res = await fetch("/api/scope-check", {
@@ -74,13 +83,18 @@ export default function ScopeCheckForm() {
         }),
       });
 
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body.error ?? `Request failed (${res.status})`);
+      const data = await res.json().catch(() => ({}));
+
+      if (res.status === 402 && data.limitReached) {
+        setLimitInfo(data as LimitInfo);
+        return;
       }
 
-      const data: AnalysisResult = await res.json();
-      setResult(data);
+      if (!res.ok) {
+        throw new Error(data.error ?? `Request failed (${res.status})`);
+      }
+
+      setResult(data as AnalysisResult);
 
       // Scroll result into view on mobile
       setTimeout(
@@ -418,6 +432,69 @@ export default function ScopeCheckForm() {
       {error && (
         <div className="rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/20 px-5 py-4 text-sm text-red-700 dark:text-red-400">
           {error}
+        </div>
+      )}
+
+      {/* Free-tier limit reached */}
+      {limitInfo && (
+        <div className="rounded-2xl border border-amber-200 dark:border-amber-800/50 bg-amber-50 dark:bg-amber-950/20 overflow-hidden">
+          <div className="px-6 py-5 flex items-start gap-4">
+            {/* Lock icon */}
+            <div className="shrink-0 w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+              <svg
+                viewBox="0 0 20 20"
+                fill="none"
+                className="w-5 h-5 text-amber-600 dark:text-amber-400"
+              >
+                <rect
+                  x="4"
+                  y="9"
+                  width="12"
+                  height="9"
+                  rx="2"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                />
+                <path
+                  d="M7 9V6a3 3 0 016 0v3"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+                <circle cx="10" cy="13.5" r="1" fill="currentColor" />
+              </svg>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-amber-800 dark:text-amber-300 text-sm">
+                Free check limit reached
+              </p>
+              <p className="mt-1 text-sm text-amber-700 dark:text-amber-400/80">
+                You&rsquo;ve used all {limitInfo.limit} free scope checks.
+                Upgrade to Pro for unlimited analyses, priority support, and
+                advanced reporting.
+              </p>
+              <div className="mt-4 flex items-center gap-3">
+                <a
+                  href="/scope-guard#pricing"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-amber-500 hover:bg-amber-600 dark:bg-amber-600 dark:hover:bg-amber-500 transition-colors shadow-sm shadow-amber-500/20"
+                >
+                  Upgrade to Pro
+                  <svg viewBox="0 0 16 16" fill="none" className="w-3.5 h-3.5">
+                    <path
+                      d="M3 8H13M8 3L13 8L8 13"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </a>
+                <span className="text-xs text-amber-600/70 dark:text-amber-500/70">
+                  {limitInfo.checksUsed} / {limitInfo.limit} checks used
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
