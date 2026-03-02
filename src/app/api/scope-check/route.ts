@@ -1,14 +1,12 @@
 /**
  * POST /api/scope-check
  *
- * Accepts { contract_text, client_message }, runs AI analysis,
+ * Accepts { contract_text, client_message }, calls analyzeScope() via OpenAI,
  * saves the result to Supabase, and returns the result to the client.
- *
- * AI integration: replace the `runAnalysis()` stub below with your
- * preferred model (OpenAI, Anthropic, etc.).
  */
 import { auth } from "@clerk/nextjs/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { analyzeScope } from "@/lib/ai/analyze-scope";
 import type { Database } from "@/types/database";
 
 type ResultStatus =
@@ -19,33 +17,6 @@ interface AnalysisResult {
   confidence_score: number;
   ai_explanation: string;
   suggested_reply: string;
-}
-
-// ---------------------------------------------------------------------------
-// AI stub — swap this for a real model call
-// ---------------------------------------------------------------------------
-async function runAnalysis(
-  contractText: string,
-  clientMessage: string,
-): Promise<AnalysisResult> {
-  // Inputs are forwarded to the AI model.
-  // TODO: replace with OpenAI / Anthropic call, e.g.:
-  //   const prompt = buildPrompt(contractText, clientMessage);
-  void contractText;
-  void clientMessage;
-  //
-  // const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-  // const completion = await openai.chat.completions.create({ ... });
-  // return parseResult(completion);
-
-  return {
-    result_status: "out_of_scope",
-    confidence_score: 87,
-    ai_explanation:
-      "The client is requesting a mobile application, which is not included in the agreed deliverables. Section 2 of your contract specifies a web application consisting of three screens. A mobile app constitutes a separate platform requiring independent design, development, and testing resources.",
-    suggested_reply:
-      "Hi,\n\nThank you for your message. I've reviewed your request against our signed agreement (Project Brief v1.2, Section 2 — Deliverables).\n\nThe current scope covers a web application with three defined screens. A mobile application falls outside the agreed deliverables.\n\nI'd be happy to scope this separately and provide a revised quote. I can have a proposal ready by end of week — let me know if you'd like to proceed.\n\nBest regards",
-  };
 }
 
 // ---------------------------------------------------------------------------
@@ -75,22 +46,9 @@ export async function POST(req: Request) {
     );
   }
 
-  // Run analysis
-  let analysis: AnalysisResult;
-  try {
-    analysis = await runAnalysis(contract_text, client_message);
-  } catch (err) {
-    console.error("[scope-check] AI analysis failed:", err);
-    return Response.json(
-      { error: "Analysis failed. Please try again." },
-      { status: 502 },
-    );
-  }
-
-  // Persist to Supabase
+  // Resolve internal user id from clerk_id (needed for limit check + insert)
   const supabase = createSupabaseServerClient();
 
-  // Resolve internal user id from clerk_id
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: user, error: userError } = await (supabase as any)
     .from("users")
@@ -104,6 +62,45 @@ export async function POST(req: Request) {
       userError?.message,
     );
     return Response.json({ error: "User record not found." }, { status: 404 });
+  }
+
+  // Free-tier limit: 5 scope checks total
+  const FREE_LIMIT = 5;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { count } = await (supabase as any)
+    .from("scope_checks")
+    .select("*", { count: "exact", head: true })
+    .eq("user_id", user.id);
+
+  if (count !== null && count >= FREE_LIMIT) {
+    return Response.json(
+      {
+        error: "You have used all 5 free scope checks.",
+        limitReached: true,
+        checksUsed: count,
+        limit: FREE_LIMIT,
+      },
+      { status: 402 },
+    );
+  }
+
+  // Run analysis
+  let analysis: AnalysisResult;
+  try {
+    const result = await analyzeScope(contract_text, client_message);
+    // Map analyzeScope() field names → internal / DB field names
+    analysis = {
+      result_status: result.status as ResultStatus,
+      confidence_score: result.confidence,
+      ai_explanation: result.explanation,
+      suggested_reply: result.suggested_reply,
+    };
+  } catch (err) {
+    console.error("[scope-check] AI analysis failed:", err);
+    return Response.json(
+      { error: "Analysis failed. Please try again." },
+      { status: 502 },
+    );
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
