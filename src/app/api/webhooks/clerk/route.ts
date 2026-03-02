@@ -6,7 +6,7 @@
  *
  * Setup:
  *  1. In your Clerk dashboard → Webhooks → Add endpoint:
- *       URL: https://your-domain.com/api/webhooks/clerk
+ *       URL: https://guardmyscope.com/api/webhooks/clerk
  *       Events: user.created, user.updated, user.deleted
  *  2. Copy the "Signing Secret" into CLERK_WEBHOOK_SECRET in .env.local
  */
