@@ -32,6 +32,7 @@ export type Database = {
           avatar_url?: string | null;
           updated_at?: string;
         };
+        Relationships: [];
       };
       scope_checks: {
         Row: {
@@ -64,6 +65,7 @@ export type Database = {
           suggested_reply?: string | null;
           confidence_score?: number | null;
         };
+        Relationships: [];
       };
     };
     Views: Record<string, never>;
