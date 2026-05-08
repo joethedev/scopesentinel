@@ -30,18 +30,27 @@ export async function POST(req: Request) {
 
   let contract_text: string;
   let client_message: string;
+  let contract_id: string | null = null;
 
   try {
     const body = await req.json();
     contract_text = (body.contract_text ?? "").trim();
     client_message = (body.client_message ?? "").trim();
+    contract_id = body.contract_id ? String(body.contract_id) : null;
   } catch {
     return Response.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  if (!contract_text || !client_message) {
+  if (!client_message) {
     return Response.json(
-      { error: "Both contract_text and client_message are required." },
+      { error: "client_message is required." },
+      { status: 422 },
+    );
+  }
+
+  if (!contract_text && !contract_id) {
+    return Response.json(
+      { error: "Either contract_text or contract_id is required." },
       { status: 422 },
     );
   }
@@ -62,6 +71,22 @@ export async function POST(req: Request) {
       userError?.message,
     );
     return Response.json({ error: "User record not found." }, { status: 404 });
+  }
+
+  // If contract_id provided, look up the contract text
+  if (contract_id && !contract_text) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: contract, error: contractError } = await (supabase as any)
+      .from("contracts")
+      .select("contract_text")
+      .eq("id", contract_id)
+      .eq("user_id", user.id)
+      .single();
+
+    if (contractError || !contract) {
+      return Response.json({ error: "Contract not found." }, { status: 404 });
+    }
+    contract_text = contract.contract_text;
   }
 
   // Free-tier limit: 5 scope checks total

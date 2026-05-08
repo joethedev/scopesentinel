@@ -28,15 +28,15 @@ export default function Footer() {
                 </svg>
               </div>
               <span className="font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
-                ScopeSentinel
+                ScopeGuard
               </span>
             </a>
             <p className="text-sm text-slate-500 dark:text-slate-500 leading-relaxed max-w-xs">
-              AI-powered protection for freelancers. Detect risky clients. Guard
-              your scope. Invoice with confidence.
+              Instantly check if a client request is out of scope — and get a
+              professional reply ready to send.
             </p>
             <p className="mt-4 text-xs text-slate-400 dark:text-slate-600">
-              Built for European Freelancers
+              Built for Freelancers
             </p>
           </div>
 
@@ -47,10 +47,9 @@ export default function Footer() {
             </h4>
             <ul className="space-y-3">
               {[
-                { label: "Client Risk Detector", href: "#solution" },
                 { label: "ScopeGuard", href: "#solution" },
-                { label: "Pricing", href: "#pricing" },
                 { label: "How It Works", href: "#how-it-works" },
+                { label: "Pricing", href: "#pricing" },
               ].map((link) => (
                 <li key={link.label}>
                   <a
@@ -116,7 +115,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-slate-400 dark:text-slate-600">
-            &copy; {currentYear} ScopeSentinel. All rights reserved.
+            &copy; {currentYear} ScopeGuard. All rights reserved.
           </p>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />

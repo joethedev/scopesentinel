@@ -56,7 +56,7 @@ export default function Navbar() {
             </svg>
           </div>
           <span className="font-semibold text-slate-900 dark:text-slate-100 tracking-tight text-lg">
-            ScopeSentinel
+            ScopeGuard
           </span>
         </a>
 

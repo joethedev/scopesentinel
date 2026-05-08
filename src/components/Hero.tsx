@@ -1,13 +1,31 @@
 "use client";
 
+import { useEffect, useRef } from "react";
+
 export default function Hero() {
+  const mockRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = mockRef.current;
+    if (!el) return;
+    const items = el.querySelectorAll<HTMLElement>("[data-reveal]");
+    items.forEach((item, i) => {
+      item.style.opacity = "0";
+      item.style.transform = "translateY(12px)";
+      setTimeout(() => {
+        item.style.transition = "opacity 0.5s ease, transform 0.5s ease";
+        item.style.opacity = "1";
+        item.style.transform = "translateY(0)";
+      }, 600 + i * 200);
+    });
+  }, []);
+
   return (
     <section className="relative min-h-screen flex items-center pt-16 overflow-hidden bg-white dark:bg-slate-950">
-      {/* Subtle gradient background */}
+      {/* Background */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-225 h-150 bg-cyan-500/5 dark:bg-cyan-400/5 rounded-full blur-3xl" />
         <div className="absolute bottom-0 right-0 w-125 h-100 bg-slate-400/5 dark:bg-slate-600/5 rounded-full blur-3xl" />
-        {/* Grid pattern */}
         <div
           className="absolute inset-0 opacity-[0.02] dark:opacity-[0.04]"
           style={{
@@ -25,29 +43,29 @@ export default function Hero() {
             {/* Badge */}
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-cyan-200 dark:border-cyan-800 bg-cyan-50 dark:bg-cyan-950/50 text-cyan-700 dark:text-cyan-400 text-xs font-medium mb-8 animate-fade-in">
               <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 dark:bg-cyan-400 animate-pulse" />
-              AI-Powered Freelancer Protection
+              AI-Powered Scope Protection
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 dark:text-slate-50 leading-[1.08] tracking-tight mb-6 animate-fade-in-up delay-100">
-              Stop Losing Money
+              Stop doing work
               <br />
               <span className="text-transparent bg-clip-text bg-linear-to-r from-cyan-600 to-cyan-400 dark:from-cyan-400 dark:to-cyan-200">
-                to Bad Clients.
+                AI flags as out of scope.
               </span>
             </h1>
 
             <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed max-w-lg mb-10 animate-fade-in-up delay-200">
-              ScopeSentinel helps freelancers detect risky clients before
-              signing and protect their scope during projects — with the
-              confidence of a professional system behind every decision.
+              ScopeGuard&apos;s AI instantly detects if a client request falls
+              outside your contract — and drafts the perfect professional
+              response for you.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-3 mb-6 animate-fade-in-up delay-300">
+            <div className="flex flex-col sm:flex-row gap-3 mb-5 animate-fade-in-up delay-300">
               <a
-                href="#solution"
+                href="#"
                 className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-white bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-500 dark:hover:bg-cyan-600 transition-all duration-200 shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/30 hover:-translate-y-0.5"
               >
-                Analyze My Next Client
+                Create your free account
                 <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4">
                   <path
                     d="M5 12H19M13 6L19 12L13 18"
@@ -58,210 +76,142 @@ export default function Hero() {
                   />
                 </svg>
               </a>
-              <a
-                href="#how-it-works"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all duration-200"
-              >
-                See How It Works
-              </a>
             </div>
 
             <p className="text-sm text-slate-500 dark:text-slate-500 animate-fade-in-up delay-400">
-              No credit card required.
+              Protect your time. Protect your boundaries.
             </p>
-
-            {/* Trust indicators */}
-            <div className="flex items-center gap-6 mt-10 pt-10 border-t border-slate-100 dark:border-slate-800 animate-fade-in-up delay-400">
-              {[
-                { value: "2,400+", label: "Freelancers Protected" },
-                { value: "€1.2M", label: "Revenue Saved" },
-                { value: "94%", label: "Risk Accuracy" },
-              ].map((stat) => (
-                <div key={stat.label}>
-                  <div className="text-xl font-bold text-slate-900 dark:text-slate-100">
-                    {stat.value}
-                  </div>
-                  <div className="text-xs text-slate-500 dark:text-slate-500 mt-0.5">
-                    {stat.label}
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
 
-          {/* Right: Dashboard Mockup */}
-          <div className="relative animate-float">
-            <div className="relative grid grid-cols-2 gap-4 max-w-lg mx-auto lg:mx-0">
-              {/* Glow effect behind cards */}
+          {/* Right: ScopeGuard result mockup */}
+          <div className="relative animate-float" ref={mockRef}>
+            <div className="relative max-w-md mx-auto lg:mx-0">
+              {/* Glow */}
               <div className="absolute inset-4 bg-cyan-500/10 dark:bg-cyan-400/10 rounded-2xl blur-2xl" />
 
-              {/* Card 1: Risk Score */}
-              <div className="relative col-span-1 rounded-2xl border border-slate-200 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm shadow-xl p-5">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                    Risk Score
-                  </div>
-                  <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-                </div>
+              <div className="relative rounded-2xl border border-slate-200 dark:border-slate-700/60 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm shadow-2xl overflow-hidden">
+                {/* Top accent */}
+                <div className="h-0.5 w-full bg-linear-to-r from-cyan-500 to-cyan-300" />
 
-                {/* Score ring */}
-                <div className="flex justify-center my-2">
-                  <div className="relative w-24 h-24">
-                    <svg viewBox="0 0 80 80" className="w-24 h-24 -rotate-90">
-                      <circle
-                        cx="40"
-                        cy="40"
-                        r="35"
+                <div className="p-6 space-y-5">
+                  {/* Header */}
+                  <div data-reveal className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-md bg-cyan-100 dark:bg-cyan-900/40 flex items-center justify-center">
+                      <svg
+                        viewBox="0 0 16 16"
                         fill="none"
-                        stroke="#e2e8f0"
-                        strokeWidth="6"
-                        className="dark:stroke-slate-700"
-                      />
-                      <circle
-                        cx="40"
-                        cy="40"
-                        r="35"
-                        fill="none"
-                        stroke="#f59e0b"
-                        strokeWidth="6"
-                        strokeLinecap="round"
-                        strokeDasharray="220"
-                        strokeDashoffset="88"
-                        className="score-circle"
-                      />
-                    </svg>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <span className="text-xl font-bold text-slate-900 dark:text-slate-100">
-                        67
-                      </span>
-                      <span className="text-[10px] text-amber-500 font-medium">
-                        Medium
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-1.5 mt-3">
-                  {[
-                    {
-                      label: "Payment History",
-                      color: "bg-red-500",
-                      w: "w-4/5",
-                    },
-                    {
-                      label: "Scope Clarity",
-                      color: "bg-amber-400",
-                      w: "w-1/2",
-                    },
-                    {
-                      label: "Contract Terms",
-                      color: "bg-emerald-500",
-                      w: "w-3/4",
-                    },
-                  ].map((item) => (
-                    <div key={item.label}>
-                      <div className="flex justify-between text-[10px] text-slate-500 dark:text-slate-500 mb-0.5">
-                        <span>{item.label}</span>
-                      </div>
-                      <div className="h-1 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
-                        <div
-                          className={`h-full ${item.color} ${item.w} rounded-full`}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Card 2: Red Flags */}
-              <div className="relative col-span-1 rounded-2xl border border-slate-200 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm shadow-xl p-5">
-                <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4">
-                  Red Flags
-                </div>
-                <div className="space-y-2.5">
-                  {[
-                    { label: "Vague deliverables", severity: "high" },
-                    { label: "No milestone plan", severity: "med" },
-                    { label: "Unclear budget", severity: "high" },
-                    { label: "Rush timeline", severity: "med" },
-                  ].map((flag) => (
-                    <div key={flag.label} className="flex items-start gap-1.5">
-                      <div
-                        className={`mt-0.5 w-1.5 h-1.5 rounded-full shrink-0 ${flag.severity === "high" ? "bg-red-500" : "bg-amber-400"}`}
-                      />
-                      <span className="text-[11px] text-slate-600 dark:text-slate-400 leading-tight">
-                        {flag.label}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800">
-                  <div className="text-[10px] text-red-500 font-semibold">
-                    2 critical flags detected
-                  </div>
-                </div>
-              </div>
-
-              {/* Card 3: ScopeGuard — full width */}
-              <div className="col-span-2 rounded-2xl border border-slate-200 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm shadow-xl p-5">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-5 h-5 rounded-md bg-cyan-100 dark:bg-cyan-900/50 flex items-center justify-center">
-                      <svg viewBox="0 0 16 16" fill="none" className="w-3 h-3">
+                        className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400"
+                      >
                         <path
-                          d="M8 3L13 6V10C13 12.2 10.85 13.75 8 14C5.15 13.75 3 12.2 3 10V6L8 3Z"
-                          stroke="#0891b2"
+                          d="M8 2L14 5V9C14 11.8 11.35 14.1 8 15C4.65 14.1 2 11.8 2 9V5L8 2Z"
+                          stroke="currentColor"
                           strokeWidth="1.5"
                           fill="none"
-                          className="dark:stroke-cyan-400"
+                        />
+                        <path
+                          d="M5.5 8L7.25 9.75L10.5 6.5"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                         />
                       </svg>
                     </div>
-                    <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
                       ScopeGuard Analysis
                     </span>
+                    <span className="ml-auto flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      Live
+                    </span>
                   </div>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 font-medium border border-red-100 dark:border-red-900/50">
-                    Out of Scope
-                  </span>
-                </div>
-                <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3 mb-3 text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed border border-slate-100 dark:border-slate-700/50">
-                  &ldquo;Can you also add a mobile app version? It should only
-                  take a few days and it&apos;s basically the same
-                  thing...&rdquo;
-                </div>
-                <div className="text-[11px] text-slate-600 dark:text-slate-400 space-y-1">
-                  <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-medium">
-                    <svg
-                      viewBox="0 0 16 16"
-                      fill="none"
-                      className="w-3 h-3 shrink-0"
-                    >
-                      <path
-                        d="M3 8L6.5 11.5L13 5"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                    Professional reply drafted
+
+                  {/* Client message */}
+                  <div data-reveal>
+                    <div className="text-[11px] font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wide mb-2">
+                      Client message
+                    </div>
+                    <div className="rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/40 p-3.5 text-sm text-slate-600 dark:text-slate-300 italic leading-relaxed">
+                      &ldquo;Can we also add the CRM integration? It
+                      shouldn&apos;t be much work...&rdquo;
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-medium">
-                    <svg
-                      viewBox="0 0 16 16"
-                      fill="none"
-                      className="w-3 h-3 shrink-0"
-                    >
-                      <path
-                        d="M3 8L6.5 11.5L13 5"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                    Contract clause identified
+
+                  {/* Result */}
+                  <div data-reveal>
+                    <div className="text-[11px] font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wide mb-2">
+                      ScopeGuard result
+                    </div>
+                    <div className="flex items-center gap-3 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/40 p-3.5">
+                      <div className="w-8 h-8 rounded-full bg-red-100 dark:bg-red-900/40 flex items-center justify-center shrink-0">
+                        <svg
+                          viewBox="0 0 16 16"
+                          fill="none"
+                          className="w-4 h-4 text-red-500 dark:text-red-400"
+                        >
+                          <circle
+                            cx="8"
+                            cy="8"
+                            r="7"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                          />
+                          <path
+                            d="M5.5 5.5L10.5 10.5M10.5 5.5L5.5 10.5"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                      </div>
+                      <div>
+                        <div className="text-sm font-bold text-red-700 dark:text-red-400">
+                          Out of scope — not in contract
+                        </div>
+                        <div className="text-xs text-red-600/70 dark:text-red-400/60 mt-0.5">
+                          CRM integration was not part of the original agreement
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Ready-to-send reply */}
+                  <div data-reveal>
+                    <div className="text-[11px] font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wide mb-2">
+                      Ready-to-send reply
+                    </div>
+                    <div className="rounded-xl bg-cyan-50 dark:bg-cyan-950/30 border border-cyan-200 dark:border-cyan-900/40 p-3.5">
+                      <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-3">
+                        &ldquo;Hi [Client], thanks for the suggestion! CRM
+                        integration wasn&apos;t included in our initial scope,
+                        but I&apos;d be happy to discuss adding it as a separate
+                        engagement...&rdquo;
+                      </p>
+                      <button className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-cyan-600 dark:text-cyan-400 hover:text-cyan-700 dark:hover:text-cyan-300 transition-colors">
+                        <svg
+                          viewBox="0 0 14 14"
+                          fill="none"
+                          className="w-3 h-3"
+                        >
+                          <rect
+                            x="1"
+                            y="1"
+                            width="12"
+                            height="12"
+                            rx="2"
+                            stroke="currentColor"
+                            strokeWidth="1.3"
+                          />
+                          <path
+                            d="M4 4H10M4 7H8"
+                            stroke="currentColor"
+                            strokeWidth="1.3"
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                        Copy reply
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

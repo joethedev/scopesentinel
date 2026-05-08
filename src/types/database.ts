@@ -34,6 +34,39 @@ export type Database = {
         };
         Relationships: [];
       };
+      contracts: {
+        Row: {
+          id: string;
+          user_id: string;
+          title: string;
+          description: string | null;
+          contract_text: string;
+          client_name: string | null;
+          project_name: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          title: string;
+          description?: string | null;
+          contract_text: string;
+          client_name?: string | null;
+          project_name?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          title?: string;
+          description?: string | null;
+          contract_text?: string;
+          client_name?: string | null;
+          project_name?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       scope_checks: {
         Row: {
           id: string;
@@ -78,3 +111,4 @@ export type Database = {
     Enums: Record<string, never>;
   };
 };
+

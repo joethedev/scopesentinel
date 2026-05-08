@@ -1,4 +1,10 @@
 export default function FinalCTA() {
+  const benefits = [
+    "Set clear boundaries",
+    "Communicate with confidence",
+    "Stay professional in every situation",
+  ];
+
   return (
     <section className="relative py-28 overflow-hidden">
       {/* Dark gradient background */}
@@ -41,15 +47,41 @@ export default function FinalCTA() {
         </div>
 
         <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-[1.1] tracking-tight mb-6">
-          Your Revenue{" "}
+          Stop overdelivering{" "}
           <span className="text-transparent bg-clip-text bg-linear-to-r from-cyan-400 to-cyan-200">
-            Deserves Protection.
+            for free.
           </span>
         </h2>
 
-        <p className="text-slate-400 text-lg max-w-xl mx-auto mb-10 leading-relaxed">
-          Every project you take on without a risk check is a calculated risk.
-          With ScopeSentinel, those calculations work in your favor.
+        <p className="text-slate-400 text-lg max-w-xl mx-auto mb-8 leading-relaxed">
+          You deserve to be paid for your work — all of it.
+        </p>
+
+        <p className="text-slate-400 mb-6">
+          ScopeGuard helps you:
+        </p>
+
+        <ul className="flex flex-col items-center gap-3 mb-10">
+          {benefits.map((benefit) => (
+            <li key={benefit} className="flex items-center gap-3 text-slate-300">
+              <div className="w-5 h-5 rounded-full bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center shrink-0">
+                <svg viewBox="0 0 12 12" fill="none" className="w-3 h-3">
+                  <path
+                    d="M2 6L5 9L10 3"
+                    stroke="#22d3ee"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+              {benefit}
+            </li>
+          ))}
+        </ul>
+
+        <p className="text-slate-500 mb-8 text-sm">
+          No more guessing. No more overthinking. No more unpaid extras.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
@@ -57,7 +89,7 @@ export default function FinalCTA() {
             href="#"
             className="inline-flex items-center gap-2 px-8 py-4 rounded-xl font-semibold text-slate-900 bg-cyan-400 hover:bg-cyan-300 transition-all duration-200 shadow-lg shadow-cyan-500/25 hover:shadow-cyan-400/30 hover:-translate-y-0.5 text-base"
           >
-            Start Free Protection
+            Create your free account
             <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4">
               <path
                 d="M5 12H19M13 6L19 12L13 18"
@@ -71,23 +103,10 @@ export default function FinalCTA() {
         </div>
 
         <p className="text-sm text-slate-500">
-          Takes less than 2 minutes. No credit card required.
+          Takes less than a minute to get started. No credit card required.
         </p>
-
-        {/* Trust stats */}
-        <div className="mt-16 pt-10 border-t border-slate-800 grid grid-cols-3 gap-6 max-w-lg mx-auto">
-          {[
-            { value: "2,400+", label: "Protected freelancers" },
-            { value: "€1.2M", label: "Revenue preserved" },
-            { value: "SOC 2", label: "Security standard" },
-          ].map((stat) => (
-            <div key={stat.label}>
-              <div className="text-xl font-bold text-white">{stat.value}</div>
-              <div className="text-xs text-slate-500 mt-0.5">{stat.label}</div>
-            </div>
-          ))}
-        </div>
       </div>
     </section>
   );
 }
+
